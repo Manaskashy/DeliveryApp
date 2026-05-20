@@ -1,50 +1,83 @@
-# Welcome to your Expo app 👋
+# Foodie - Premium Food Delivery & Dining App 🍔🚗💨
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to **Foodie**! A high-fidelity, production-grade React Native food delivery and dining application built using **Expo**, **React Navigation**, and **TypeScript**. 
 
-## Get started
+Designed to mimic state-of-the-art platforms like Zomato, this app features a visually stunning, responsive layout, fluid micro-animations, and a highly structured component architecture.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## ✨ Key Features
 
-2. Start the app
+*   🔑 **Wizard-Style Authentication**: A seamless onboarding flow that dynamically transitions from Mobile Input (`Continue`) to secure Password Entry (`Login`) in the *exact same container* once a valid 10-digit number is inputted.
+*   🧭 **Fluid Tab Navigation**: Native-feel, high-performance tab-based routing featuring high-end custom header configurations.
+*   🚪 **Animated Custom Side-Drawer**: Fully animated sliding profile drawer overlay built using React Native's native `Animated` timing API, complete with gradient profile cards (`expo-linear-gradient`), user stats, and a stack-clearing secure **Logout** reset routine.
+*   🥗 **Dynamic Category & Restaurant Listings**: Interactive visual filters, custom category carousels, and high-fidelity food cards with real-time shadow elevations.
+*   🛒 **Complete Checkout & Cart Flow**: Detailed billing cards with live subtotal math, custom valet tipping selectors, Feeding India charity donation toggles, and fully polished contactless delivery options.
+*   🛡️ **100% Strict TypeScript Integration**: Strongly typed data models and cast hooks ensuring **zero compiler warnings or errors** across the entire workspace.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠️ Technology Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+*   **Framework**: [React Native](https://reactnative.dev/) with [Expo](https://expo.dev/)
+*   **Routing**: File-based [Expo Router](https://docs.expo.dev/router/introduction/) (React Navigation)
+*   **Styling**: Premium, responsive Vanilla `StyleSheet.create` with custom shadow mappings
+*   **Icons**: `@expo/vector-icons` (Ionicons, MaterialCommunityIcons, FontAwesome)
+*   **Gradients**: `expo-linear-gradient` for premium backdrop transitions
+*   **Type Safety**: TypeScript with strict lint checking rules
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🚀 Getting Started
 
-When you're ready, run:
+### 1. Prerequisite Installations
+Ensure you have [Node.js](https://nodejs.org/) and the [Expo Go](https://expo.dev/go) app (for physical devices) or [Android Studio](https://developer.android.com/studio) / [Xcode](https://developer.apple.com/xcode/) (for emulators) set up on your system.
 
+### 2. Install Dependencies
+Navigate to the root directory and install npm modules:
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Run the Development Server
+Launch the compiler and boot the dev server:
+```bash
+# To run on Android Emulator/Device
+npm run android
 
-## Learn more
+# To run on iOS Simulator
+npm run ios
 
-To learn more about developing your project with Expo, look at the following resources:
+# Or start the expo GUI
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 4. Running Quality Checks & Linting
+The codebase is validated and configured with Expo's strict linting and TypeScript compiler options. To verify build integrity, run:
+```bash
+npm run lint
+```
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 📁 Directory Structure
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+DeliveryApp/
+├── app/                  # Main Expo Router pages & screens
+│   ├── (tabs)/           # Navigation Tab group (HomeScreen, CartScreen, etc.)
+│   ├── _layout.tsx       # Core React Navigation Stack router configurations
+├── assets/               # Local static assets (Images, Food Photos, Vectors)
+├── components/           # Modular, reusable presentation components
+├── constants/            # Global styling colors and configuration tokens
+├── hooks/                # Custom React hooks (navigation, state storage, etc.)
+├── package.json          # Node dependencies and scripts
+└── tsconfig.json         # Strict TypeScript compiler options
+```
+
+---
+
+## 💅 UX & Aesthetic Design Rules
+*   **Palette**: Tailored crimson red (`#CB202D`) matching modern food delivery design languages, offset by pure `#ffffff` canvas backdrops and charcoal text (`#2D2D2D`).
+*   **Smooth Fades**: Bottom-anchored transparent-to-white linear gradient overlays fading out image headers softly.
+*   **Elevation**: Styled depth dimensions (`shadowOffset`, `shadowOpacity`, `elevation`) to construct floating, clickable cards.
