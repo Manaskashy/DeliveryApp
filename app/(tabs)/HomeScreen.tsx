@@ -11,13 +11,26 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Animated,
+  Dimensions
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LinearGradient } from 'expo-linear-gradient'; // For premium profile avatar gradient
 
-const RestaurantCard = ({ restaurant }) => {
-  const navigation = useNavigation(); // Hook to access navigation
+const { width } = Dimensions.get('window');
+
+interface Restaurant {
+  name: string;
+  rating: number;
+  price: string;
+  description: string;
+  image: any;
+}
+
+const RestaurantCard = ({ restaurant }: { restaurant: Restaurant }) => {
+  const navigation = useNavigation<any>(); // Hook to access navigation
   return (
   <TouchableOpacity onPress={() => navigation.navigate('Shop')} style={styles.restaurantCard}>
     <Image source={restaurant.image} style={styles.restaurantImage} />
@@ -57,6 +70,46 @@ const RestaurantCard = ({ restaurant }) => {
 
 
 const App = () => {
+  const navigation = useNavigation<any>();
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const slideAnim = React.useRef(new Animated.Value(width)).current;
+
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+    // Reset value off screen right before starting animation
+    slideAnim.setValue(width);
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, {
+      toValue: width,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsDrawerOpen(false);
+    });
+  };
+
+  const handleLogout = () => {
+    Animated.timing(slideAnim, {
+      toValue: width,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsDrawerOpen(false);
+      // Reset navigation stack to Home screen (SignupScreen) so they cannot hit back button to re-enter
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
+    });
+  };
+
   const categories = [
     { name: 'Healthy', image: require('../../assets/images/Healthy.png') },
     { name: 'Biryani', image: require('../../assets/images/Biryani.png') },
@@ -77,7 +130,7 @@ const App = () => {
     { name: 'Pallavi Biryani', rating: 3.8, price: '₹150 for one', description: 'Biryani, North Indian, Chinese', image: require('../../assets/images/shreyak-singh-0j4bisyPo3M-unsplash 1.png') },
   ];
   
-  const filters = ['MAX safety', 'PRO', 'Cuisines', 'Rating', 'Popular'];
+
 
   const ListHeader = () => (
     <>
@@ -86,7 +139,9 @@ const App = () => {
         <Text style={styles.locationText} numberOfLines={1}>
           ..................................................
         </Text>
-        <Icon name="bars" size={22} color="#333" />
+        <TouchableOpacity onPress={openDrawer} activeOpacity={0.7} style={styles.menuIconButton}>
+          <Icon name="bars" size={22} color="#333" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.searchContainer}>
@@ -166,6 +221,59 @@ const App = () => {
           <MaterialCommunityIcons name="heart" size={24} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
+
+      {isDrawerOpen && (
+        <View style={styles.drawerOverlayContainer}>
+          <TouchableOpacity 
+            style={styles.backdrop} 
+            activeOpacity={1} 
+            onPress={closeDrawer}
+          />
+          <Animated.View style={[styles.drawerPanel, { transform: [{ translateX: slideAnim }] }]}>
+            <View style={styles.drawerHeader}>
+              <LinearGradient
+                colors={['#CB202D', '#EC0C92']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.avatarContainer}
+              >
+                <Text style={styles.avatarText}>M</Text>
+              </LinearGradient>
+              <View style={styles.profileTextContainer}>
+                <Text style={styles.profileName}>Manas Kashyap</Text>
+                <Text style={styles.profilePhone}>+91 9010858965</Text>
+              </View>
+            </View>
+
+            <View style={styles.drawerDivider} />
+
+            <ScrollView style={styles.drawerItemsContainer} showsVerticalScrollIndicator={false}>
+              {[
+                { name: 'My Profile', icon: 'user', color: '#EC0C92' },
+                { name: 'My Orders', icon: 'shopping-bag', color: '#CB202D' },
+                { name: 'Saved Addresses', icon: 'map-marker', color: '#267E3E' },
+                { name: 'Notifications', icon: 'bell', color: '#FFB300' },
+                { name: 'Help & Support', icon: 'question-circle', color: '#0288D1' }
+              ].map((item, index) => (
+                <TouchableOpacity key={index} style={styles.drawerItem} activeOpacity={0.7}>
+                  <View style={styles.drawerItemLeft}>
+                    <View style={[styles.drawerItemIconContainer, { backgroundColor: item.color + '15' }]}>
+                      <Icon name={item.icon} size={18} color={item.color} />
+                    </View>
+                    <Text style={styles.drawerItemText}>{item.name}</Text>
+                  </View>
+                  <Icon name="chevron-right" size={12} color="#BDBDBD" />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
+              <Icon name="sign-out" size={20} color="#fff" style={styles.logoutIcon} />
+              <Text style={styles.logoutText}>Logout</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -418,6 +526,129 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  menuIconButton: {
+    padding: 5,
+  },
+  drawerOverlayContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+    flexDirection: 'row',
+  },
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  drawerPanel: {
+    width: width * 0.78,
+    height: '100%',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: -4, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 10,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingHorizontal: 20,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  avatarContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  profileTextContainer: {
+    flex: 1,
+  },
+  profileName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D2D2D',
+  },
+  profilePhone: {
+    fontSize: 13,
+    color: '#757575',
+    marginTop: 3,
+  },
+  drawerDivider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginVertical: 15,
+  },
+  drawerItemsContainer: {
+    flex: 1,
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F9F9F9',
+  },
+  drawerItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  drawerItemIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  drawerItemText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#424242',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    backgroundColor: '#CB202D',
+    borderRadius: 12,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Platform.OS === 'ios' ? 40 : 25,
+    shadowColor: '#CB202D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  logoutIcon: {
+    marginRight: 10,
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

@@ -10,7 +10,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
+    Dimensions
 } from 'react-native';
 
 // Dummy data for the screen
@@ -48,7 +49,7 @@ const tipOptions = [
   { amount: 0, iconName: 'gift-outline', label: 'Custom' }, // 0 means custom input
 ];
 
-const CheckoutScreen = ({ navigation }) => { // Assuming navigation is passed for back/close
+const CheckoutScreen = ({ navigation }: { navigation: any }) => { // Assuming navigation is passed for back/close
   const [itemQuantity, setItemQuantity] = useState(orderData.item.quantity);
   const [selectedTip, setSelectedTip] = useState(null); // Can be amount or 'custom'
   const [customTipAmount, setCustomTipAmount] = useState('');
@@ -67,11 +68,11 @@ const CheckoutScreen = ({ navigation }) => { // Assuming navigation is passed fo
     (addDonation ? orderData.billDetails.donation : 0) +
     finalTipAmount;
 
-  const handleQuantityChange = (change) => {
+  const handleQuantityChange = (change: number) => {
     setItemQuantity(prev => Math.max(1, prev + change));
   };
 
-  const handleTipSelection = (tip) => {
+  const handleTipSelection = (tip: any) => {
     if (selectedTip === tip.amount || (selectedTip === 'custom' && tip.label === 'Custom')) {
       setSelectedTip(null); // Deselect if already selected
       if (tip.label === 'Custom') setCustomTipAmount('');
@@ -164,7 +165,7 @@ const CheckoutScreen = ({ navigation }) => { // Assuming navigation is passed fo
                   ]}
                   onPress={() => handleTipSelection(tip)}
                 >
-                  <MaterialCommunityIcons name={tip.iconName} size={24} color={(selectedTip === tip.amount || (selectedTip === 'custom' && tip.label === 'Custom')) ? '#D32F2F' : '#555'} />
+                  <MaterialCommunityIcons name={tip.iconName as any} size={24} color={(selectedTip === tip.amount || (selectedTip === 'custom' && tip.label === 'Custom')) ? '#D32F2F' : '#555'} />
                   <Text style={[styles.tipAmountText, (selectedTip === tip.amount || (selectedTip === 'custom' && tip.label === 'Custom')) && styles.selectedTipText]}>{tip.label}</Text>
                   {tip.subLabel && <Text style={styles.tipMostTipped}>{tip.subLabel}</Text>}
                 </TouchableOpacity>
@@ -226,7 +227,7 @@ const CheckoutScreen = ({ navigation }) => { // Assuming navigation is passed fo
               <View style={styles.covidTextContainer}>
                 <Text style={styles.covidTitle}>This order is related to a COVID-19 emergency</Text>
                 <Text style={styles.covidSubtitle}>This order will be prepared and delivered on priority. It will be a contactless delivery. #RestaurantsAgainstCOVID</Text>
-                <Text style={styles.covidFinePrint}>Treat this as an ambulance and please don't misuse it.</Text>
+                <Text style={styles.covidFinePrint}>Treat this as an ambulance and please don{"'"}t misuse it.</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -396,8 +397,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
     paddingHorizontal: 16, paddingVertical: 10,
     borderTopWidth: 1, borderTopColor: '#E0E0E0',
-    paddingBottom: Platform.OS === 'ios' ? Math.max(10, Dimensions.get('window').safeAreaInsets?.bottom || 0) : 10,
-    height: Platform.OS === 'ios' ? 70 + Math.max(0, Dimensions.get('window').safeAreaInsets?.bottom || 0 -10) : 70,
+    paddingBottom: Platform.OS === 'ios' ? Math.max(10, (Dimensions.get('window') as any).safeAreaInsets?.bottom || 0) : 10,
+    height: Platform.OS === 'ios' ? 70 + Math.max(0, ((Dimensions.get('window') as any).safeAreaInsets?.bottom || 0) - 10) : 70,
   },
   paymentMethod: {flexDirection:'row', alignItems:'center', flex:0.7},
   gpayLogo: {width: 20, height: 20, resizeMode: 'contain', marginRight: 4},
